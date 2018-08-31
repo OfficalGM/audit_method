@@ -1,4 +1,4 @@
-package hash;
+package audit_method;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

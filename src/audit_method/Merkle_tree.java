@@ -1,4 +1,4 @@
-package hash;
+package audit_method;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
