@@ -1,36 +1,35 @@
 package audit_method;
 
-import java.math.BigInteger;
+import com.google.gson.GsonBuilder;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class NewClass {
 
-    public static void main(String args[]) {
-        int height = 10;
-        List<String> list = new ArrayList<>();
-//        BigInteger arr[]=new BigInteger[1024];
-        for (int i = 0; i < (1 << height); i++) {
-            list.add(i + "");
-//            arr[i]=new BigInteger(i+"");
-        }
-        long a = System.currentTimeMillis();
-        Merkle_tree m = new Merkle_tree(list, height);
-        
-        m.Verify("7");
-//        for (int i = 0; i < 100; i++) {
-//            ;
-//        }
-        long b = System.currentTimeMillis();
-        System.out.println(m.list);
-        System.out.println((double) (b - a) / 1000);
-        long c = System.currentTimeMillis();
-        AH ah = new AH();
-        ah.delete(7);
-        long e = System.currentTimeMillis();
-        System.out.println((double) (e - c) / 1000);
-        ah.add("7");
+    public static ArrayList<Block> blockchain = new ArrayList<Block>();
 
+    public static void main(String args[]) {
+        // 1<<18;
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < 1024; i++) {
+            list.add(i + "");
+        }
+        blockchain.add(new Block("0", "0", list));
+        String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
+        System.out.println(blockchainJson);
+//        write_file(blockchainJson);
     }
 
+    public static void write_file(String data) {
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(new File("./block.json"));
+            os.write(data.getBytes());
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+    }
 }

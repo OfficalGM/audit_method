@@ -22,7 +22,7 @@ public class AH {
         for (BigInteger i : arr) {
             AH = AH.multiply(i).mod(p);
         }
-        System.out.println(AH);
+       
     }
 
     public void delete(int proof) {
