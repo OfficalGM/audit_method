@@ -1,6 +1,5 @@
 package audit_method;
 
-import static audit_method.NewClass.blockchain;
 import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,36 +14,34 @@ public class JavaTest {
 
     public static void main(String args[]) {
         List<String> list = new ArrayList<>();
-
-//        for (int i = 0; i < (1 << 10); i++) {
-//            list.add(i + "");
-//        }
-        Merkle_tree mk;
-        
-//        System.out.println(mk.list.size());
-        int number = 17;
-//        System.out.println((1 << number));
+        Merkle_tree mk = new Merkle_tree(3);
+        int number = 13;
         int k = 0;
-        long a=System.nanoTime();
+        System.out.println((1 << number) / 1024);
+        long a = System.nanoTime();
+
         for (int i = 1; i <= (1 << number) / 1024; i++) {
-            for (int j = k; j < 1024 * i; j++) {
+            for (int j = k; j < (1024 * i); j++) {
+//                list.add(j+"");
                 list.add(sha256(j + ""));
             }
-            mk = new Merkle_tree(list, 10);
+            mk.create(list);
             if (i == 1) {
                 blockchain.add(new Block("0", mk.list.get(0), list));
             } else {
                 blockchain.add(new Block(blockchain.get(i - 2).hash, mk.list.get(0), list));
             }
-            list = new ArrayList<>();
-            k = (1 << number) - 1024;
+            mk.clear();
+            list=new ArrayList<>();
+            k = 1024 * i;
+
         }
-        long b=System.nanoTime();
-        System.out.println((double)(b-a)/1000000);
+        long b = System.nanoTime();
+        System.out.println((double) (b - a) / 1000000);
         String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
-//        System.out.println(blockchainJson);
+
         write_file(blockchainJson);
-//        System.out.println(list.size());
+
     }
 
     private static String sha256(String base) {

@@ -10,23 +10,34 @@ public class Merkle_tree {
     public List<String> list = new ArrayList<>();
     private int height;
 
-    public Merkle_tree(List traction, int height) {
+    public Merkle_tree(int height) {
         this.height = height;
+    }
+
+    public void create(List traction) {
         for (int i = traction.size() - 1; i >= 0; i--) {
             this.list.add((String) traction.get(i));
 //            this.list.add(sha256((String) traction.get(i)));
         }
-
+          
         List<String> tmp_list = compute(list);
-
+        
         list.addAll(tmp_list);
-
+      
         while (tmp_list.size() != 1) {
+           
             tmp_list = compute(tmp_list);
+           
             list.addAll(tmp_list);
+            
         }
+      
         Collections.reverse(list);
 
+    }
+
+    public void clear() {
+        this.list.clear();
     }
 
     private List<String> compute(List list2) {
