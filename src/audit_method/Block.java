@@ -16,7 +16,7 @@ public class Block {
         this.merkle_root = merkle_root;
         this.tx = traction;
         this.timeStamp = System.currentTimeMillis();
-        this.hash = sha256(timeStamp + timeStamp + merkle_root);
+        this.hash = sha256(timeStamp + previousHash + merkle_root);
     }
 
     private String sha256(String base) {
