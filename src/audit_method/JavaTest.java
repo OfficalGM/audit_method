@@ -21,22 +21,23 @@ public class JavaTest {
     public static int[] random = {9353, 84769, 46569, 127170, 93812, 10584, 64014, 93570, 16714, 87483};
     public static int[] block_number = {10, 83, 46, 125, 92, 11, 63, 92, 17, 86};
     public static String[] block_hash = {
-        "5ca0ef1305cc097b355c920e0c66da12b91ce605119465909c807fc34dc6fffa",
-        "3cc0af3ba123abbf751ac2e8f4b6dda9c05e0aadcb3b84fb946ba9da14c4ee63",
-        "380e79acd537aae852741d8855d094217ef87c923a1d1a5ec45085e15b4aaa12",
-        "b44ea78024e614701c37cf89a82f9f3510751ac85235cebd2358b7314422a4e2",
-        "4d8c659de50eeaf1fc746fbfb0b1a45b1ba96e2694568b69eeeee793cd9340df",
-        "39515ebd8d6ba885b4afc9417e407aca378f6242da692e872ee1aca4dd346923",
-        "278f9c0480b5645023494239ceb9ad5eb21574de19e9e7449910f4061fb360d3",
-        "4d8c659de50eeaf1fc746fbfb0b1a45b1ba96e2694568b69eeeee793cd9340df",
-        "ca83c5360e99ef07903ab31fb902846974865472a4e57f459b4a631e34b22efd",
-        "d374f84cc2cf8d6e4b8ef3aba83b39788529dfec73094960ba6e13947958054e"
+        "1b7c5612545c7b241c4bdef53c91016bcf4fdc087dd582936984641f00cd452f",
+        "46969202c0207674fc2c49c1f6c85f18eeab3313adfafc3fba6357d51842b709",
+        "fe1b7e7b02b2a4c59dc2197ff8579a836bc5a9f5297ae69588b5ed50c2c2fd6d",
+        "103d8b822bafd2b7d83432416e06ef0899e83206526c20bbe6373818f536716b",
+        "3a6d9b4d6a82626a8bb6c71660c4a61cfbc7d2a6eb1948cc8aad277760b0ece0",
+        "2e8becf7b76902d0b4f0a68f846d611dc2527b969c4b0a6f812e1cb43582eaf0",
+        "f3edf8de7705fe25fcc7f478e610ef9c29e125f04b1348ccd630b1296a7ac5e5",
+        "3a6d9b4d6a82626a8bb6c71660c4a61cfbc7d2a6eb1948cc8aad277760b0ece0",
+        "f834c4b658f2f2f321c427e0196120a1e377b9ba504e7d39cb57db4f5644af60",
+        "67fb59e482b29243fd42ee2862317878de8525146c14d7b4e3914c9b7a67ad1e"
     };
 
     public static void main(String args[]) {
-        write();
-//        String json = Read_file();
-//        json_analysis(json);
+//        write();
+
+        String json = Read_file();
+        json_analysis(json);
 
     }
 
@@ -58,7 +59,7 @@ public class JavaTest {
         JsonParser parser = new JsonParser();
         JsonElement element = parser.parse(json);
 //        JsonObject jsonObject = element.getAsJsonObject();
-        
+
         int index = 0;
         JsonArray jsonArray = element.getAsJsonArray();
         for (int i = 0; i < 10; i++) {
@@ -72,10 +73,9 @@ public class JavaTest {
                 mk.create(list);
                 mk.Verify(random[i] + "");
                 list.clear();
-                
-                
-                for (int j = index+1; j < jsonArray.size(); j++) {
-                   
+              
+                for (int j = index + 1; j < jsonArray.size(); j++) {
+
                 }
             }
 
