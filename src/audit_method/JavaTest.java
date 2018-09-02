@@ -1,15 +1,12 @@
 package audit_method;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -20,32 +17,60 @@ import java.util.List;
 public class JavaTest {
 
     public static ArrayList<Block> blockchain = new ArrayList<Block>();
+    public static int[] random = {9353, 84769, 46569, 127170, 93812, 10584, 64014, 93570, 16714, 87483};
+    public static int[] block_number = {10, 83, 46, 125, 92, 11, 63, 92, 17, 86};
+    public static String[] block_hash = {
+        "5ca0ef1305cc097b355c920e0c66da12b91ce605119465909c807fc34dc6fffa",
+        "3cc0af3ba123abbf751ac2e8f4b6dda9c05e0aadcb3b84fb946ba9da14c4ee63",
+        "380e79acd537aae852741d8855d094217ef87c923a1d1a5ec45085e15b4aaa12",
+        "b44ea78024e614701c37cf89a82f9f3510751ac85235cebd2358b7314422a4e2",
+        "4d8c659de50eeaf1fc746fbfb0b1a45b1ba96e2694568b69eeeee793cd9340df",
+        "39515ebd8d6ba885b4afc9417e407aca378f6242da692e872ee1aca4dd346923",
+        "278f9c0480b5645023494239ceb9ad5eb21574de19e9e7449910f4061fb360d3",
+        "4d8c659de50eeaf1fc746fbfb0b1a45b1ba96e2694568b69eeeee793cd9340df",
+        "ca83c5360e99ef07903ab31fb902846974865472a4e57f459b4a631e34b22efd",
+        "d374f84cc2cf8d6e4b8ef3aba83b39788529dfec73094960ba6e13947958054e"
+    };
 
     public static void main(String args[]) {
-        List<String> list = new ArrayList<>();
-        Merkle_tree mk = new Merkle_tree(10);
-        long a = System.nanoTime();
-//        Run_AddBlock_Test(mk, list);
-        String json = Read_file();
 
+        long a = System.nanoTime();
+//        write();
+        String json = Read_file();
         json_analysis(json);
         long b = System.nanoTime();
         System.out.println((double) (b - a) / 1000000);
-//        String blockchainJson = new Gson().toJson(blockchain);
-//        System.out.println(blockchainJson);
-//        Run_AddBlock_Test(mk, list);
-//        write_file(blockchainJson);
+
+    }
+
+    public static void write() {
+        List<String> list = new ArrayList<>();
+        Merkle_tree mk = new Merkle_tree(10);
+        Run_AddBlock_Test(mk, list);
+        for (int i = 0; i < 128; i++) {
+            String blockchainJson = new Gson().toJson(blockchain.get(i));
+            write_file(blockchainJson, (i + 1) + "");
+        }
+        String blockchainJson = new Gson().toJson(blockchain);
+        write_file(blockchainJson);
     }
 
     public static void json_analysis(String json) {
         JsonParser parser = new JsonParser();
         JsonElement element = parser.parse(json);
+//        JsonObject jsonObject = element.getAsJsonObject();
 
+//        System.out.println(jsonObject.get("hash"));
+        int index = 0;
         JsonArray jsonArray = element.getAsJsonArray();
-        for (int i = 0; i < jsonArray.size(); i++) {
-            String previous= jsonArray.get(i).getAsJsonObject().get("previousHash").getAsString();
-            String hash = jsonArray.get(i).getAsJsonObject().get("hash").getAsString();
-            System.out.println(previous+" "+hash);
+        for (int i = 0; i < 10; i++) {
+            String hash = jsonArray.get(block_number[i] - 1).getAsJsonObject().get("hash").getAsString();
+            if (hash.equals(block_hash[i])) {
+                for (int j = 0; j < jsonArray.size(); j++) {
+
+                }
+            }
+
         }
 
     }
@@ -53,11 +78,9 @@ public class JavaTest {
     public static void Run_AddBlock_Test(Merkle_tree mk, List list) {
         int number = 17;
         int k = 0;
-        System.out.println((1 << number) / 1024);
-
         for (int i = 1; i <= (1 << number) / 1024; i++) {
             for (int j = k; j < (1024 * i); j++) {
-//                list.add(j+"");
+//                list.add(j + "");
                 list.add(sha256(j + ""));
             }
             mk.create(list);
@@ -93,10 +116,19 @@ public class JavaTest {
         }
     }
 
+    public static String Read_file(String number) {
+        try {
+            byte[] encoded = Files.readAllBytes(Paths.get("./block/block" + number + ".json"));
+            return new String(encoded, "UTF-8");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static String Read_file() {
         try {
             byte[] encoded = Files.readAllBytes(Paths.get("./block.json"));
-//            System.out.println(new String(encoded, "UTF-8"));
             return new String(encoded, "UTF-8");
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -107,10 +139,25 @@ public class JavaTest {
     public static void write_file(String data) {
         OutputStream os = null;
         try {
-            os = new FileOutputStream(new File("./block.json"));
+            os = new FileOutputStream(new File("./block" + ".json"));
             os.write(data.getBytes());
+            os.close();
         } catch (Exception ex) {
             System.out.println(ex);
         }
+
+    }
+
+    public static void write_file(String data, String index) {
+
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(new File("./block/block" + index + ".json"));
+            os.write(data.getBytes());
+            os.close();
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+
     }
 }
