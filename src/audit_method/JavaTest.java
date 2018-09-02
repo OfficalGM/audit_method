@@ -66,6 +66,7 @@ public class JavaTest {
             String hash = jsonArray.get(block_number[i] - 1).getAsJsonObject().get("hash").getAsString();
             if (hash.equals(block_hash[i])) {
                 index = block_number[i] - 1;
+
                 Merkle_tree mk = new Merkle_tree(10);
                 JsonArray tx = jsonArray.get(index).getAsJsonObject().get("tx").getAsJsonArray();
                 ArrayList<String> list = new Gson().fromJson(tx.toString(), new TypeToken<List<String>>() {
@@ -73,9 +74,14 @@ public class JavaTest {
                 mk.create(list);
                 mk.Verify(random[i] + "");
                 list.clear();
-              
-                for (int j = index + 1; j < jsonArray.size(); j++) {
 
+                for (int j = index; j < jsonArray.size(); j++) {
+                    String previous_hash = jsonArray.get(j).getAsJsonObject().get("previousHash").getAsString();
+                    String root = jsonArray.get(j).getAsJsonObject().get("merkle_root").getAsString();
+                    String ts = jsonArray.get(j).getAsJsonObject().get("timeStamp").getAsString();
+                    String sha = sha256(ts + previous_hash + root);
+                    hash = jsonArray.get(j).getAsJsonObject().get("hash").getAsString();
+                    System.out.println(sha.equals(hash));
                 }
             }
 
