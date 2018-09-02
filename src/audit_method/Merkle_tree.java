@@ -43,6 +43,7 @@ public class Merkle_tree {
     private List<String> compute(List list2) {
         int index = 0;
         List<String> tmp_list = new ArrayList();
+//        System.out.println(index+" "+list2.size());
         while (index < list2.size()) {
             String sha = sha256((String) list2.get(index + 1) + (String) list2.get(index));
 //            String sha = (String) list2.get(index + 1) + (String) list2.get(index);

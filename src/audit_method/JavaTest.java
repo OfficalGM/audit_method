@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -33,13 +34,9 @@ public class JavaTest {
     };
 
     public static void main(String args[]) {
-
-        long a = System.nanoTime();
 //        write();
         String json = Read_file();
         json_analysis(json);
-        long b = System.nanoTime();
-        System.out.println((double) (b - a) / 1000000);
 
     }
 
@@ -56,23 +53,35 @@ public class JavaTest {
     }
 
     public static void json_analysis(String json) {
+        long a = System.nanoTime();
+
         JsonParser parser = new JsonParser();
         JsonElement element = parser.parse(json);
 //        JsonObject jsonObject = element.getAsJsonObject();
-
-//        System.out.println(jsonObject.get("hash"));
+        
         int index = 0;
         JsonArray jsonArray = element.getAsJsonArray();
         for (int i = 0; i < 10; i++) {
             String hash = jsonArray.get(block_number[i] - 1).getAsJsonObject().get("hash").getAsString();
             if (hash.equals(block_hash[i])) {
-                for (int j = 0; j < jsonArray.size(); j++) {
-
+                index = block_number[i] - 1;
+                Merkle_tree mk = new Merkle_tree(10);
+                JsonArray tx = jsonArray.get(index).getAsJsonObject().get("tx").getAsJsonArray();
+                ArrayList<String> list = new Gson().fromJson(tx.toString(), new TypeToken<List<String>>() {
+                }.getType());
+                mk.create(list);
+                mk.Verify(random[i] + "");
+                list.clear();
+                
+                
+                for (int j = index+1; j < jsonArray.size(); j++) {
+                   
                 }
             }
 
         }
-
+        long b = System.nanoTime();
+        System.out.println((double) (b - a) / 1000000);
     }
 
     public static void Run_AddBlock_Test(Merkle_tree mk, List list) {
