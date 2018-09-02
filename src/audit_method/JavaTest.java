@@ -34,9 +34,9 @@ public class JavaTest {
     };
 
     public static void main(String args[]) {
-//        write();
-        String json = Read_file();
-        json_analysis(json);
+        write();
+//        String json = Read_file();
+//        json_analysis(json);
 
     }
 
