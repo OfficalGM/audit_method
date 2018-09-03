@@ -2,68 +2,88 @@ package audit_method;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class AH {
-
-    public BigInteger p;
-    public BigInteger location_number;
-    public BigInteger[] arr;
-    public BigInteger AH;
-
+    
+    public ArrayList<HashMap<BigInteger, BigInteger>> list = new ArrayList();
+    private int arrlength = 128;
+    public BigInteger[] array = new BigInteger[arrlength];
+    private BigInteger prime;
+    public BigInteger AH = BigInteger.ONE;
+    
     public AH() {
-        arr = new BigInteger[1024];
-        p = new BigInteger(256, new Random());
-        location_number = new BigInteger("1024");
-        AH = BigInteger.ONE;
-        for (int i = 0; i < 1024; i++) {
-            arr[i] = sha256(i + "");
+        prime = BigInteger.probablePrime(256, new Random());
+        for (int i = 0; i < arrlength; i++) {
+            HashMap<BigInteger, BigInteger> map = new HashMap();
+            list.add(map);
         }
-        for (BigInteger i : arr) {
-            AH = AH.multiply(i).mod(p);
-        }
-       
-    }
-
-    public void delete(int proof) {
-        BigInteger temp = sha256(proof+"");
-        temp = temp.modInverse(p);
-        AH = AH.multiply(temp).mod(p);
-        arr[proof-1]=BigInteger.ONE;
-        
-
-    }
-
-    public void add(String proof) {
-        BigInteger temp = sha256(proof);
-        AH = AH.multiply(temp).mod(p);
         
     }
-
-    public void print() {
-        for (BigInteger i : arr) {
-            System.out.println(i + " ");
+    
+    public boolean audit(String path) {
+        BigInteger index = index_function(path);
+        BigInteger ah = BigInteger.ONE;
+        for (Object i : list.get(index.intValue()).keySet()) {
+            BigInteger key = (BigInteger) i;
+            BigInteger value = (BigInteger) list.get(index.intValue()).get(i);
+            BigInteger sha = sha256(key + "" + value + "");
+            ah = ah.multiply(sha).mod(prime);
         }
+        
+        return ah.equals(array[index.intValue()]);
     }
-
+    
+    public void Delete(String path, String file) {
+        BigInteger index = index_function(path);
+        BigInteger f = sha256(file);
+        BigInteger p = sha256(path);
+        BigInteger AH_inverse = sha256(f + "" + p).modInverse(prime);
+        list.get(index.intValue()).remove(p, f);
+        array[index.intValue()] = array[index.intValue()].multiply(AH_inverse).mod(prime);
+    }
+    
+    public void Add(String path, String file) {
+        BigInteger index = index_function(path);
+        BigInteger f = sha256(file);
+        BigInteger p = sha256(path);
+        list.get(index.intValue()).put(p, f);
+        multiply(list.get(index.intValue()), index);
+    }
+    
+    private void multiply(HashMap hashmap, BigInteger index) {
+        BigInteger ah = BigInteger.ONE;
+        for (Object i : hashmap.keySet()) {
+            BigInteger key = (BigInteger) i;
+            BigInteger value = (BigInteger) hashmap.get(i);
+            BigInteger sha = sha256(key + "" + value + "");
+            ah = ah.multiply(sha).mod(prime);
+        }
+        array[index.intValue()] = ah;
+    }
+    
+    public void updateAH() {
+        for (int i = 0; i < array.length; i++) {
+            AH = AH.multiply(array[i]).mod(prime);
+        }
+        
+    }
+    
+    public BigInteger index_function(String proof) {
+        return sha256(proof).mod(new BigInteger(arrlength + ""));
+    }
+    
     private BigInteger sha256(String base) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(base.getBytes("UTF-8"));
+            
             return new BigInteger(hash);
-//            StringBuffer hexString = new StringBuffer();
-//
-//            for (int i = 0; i < hash.length; i++) {
-//                String hex = Integer.toHexString(0xff & hash[i]);
-//                if (hex.length() == 1) {
-//                    hexString.append('0');
-//                }
-//                hexString.append(hex);
-//            }
-//
-//            return hexString.toString();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
+    
 }

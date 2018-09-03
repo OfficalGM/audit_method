@@ -17,7 +17,7 @@ import java.util.List;
 
 public class JavaTest {
 
-    public static ArrayList<Block> blockchain = new ArrayList<Block>();
+    public static ArrayList<Block> blockchain;
     public static int[] random = {9353, 84769, 46569, 127170, 93812, 10584, 64014, 93570, 16714, 87483};
     public static int[] block_number = {10, 83, 46, 125, 92, 11, 63, 92, 17, 86};
     public static String[] block_hash = {
@@ -32,25 +32,62 @@ public class JavaTest {
         "f834c4b658f2f2f321c427e0196120a1e377b9ba504e7d39cb57db4f5644af60",
         "67fb59e482b29243fd42ee2862317878de8525146c14d7b4e3914c9b7a67ad1e"
     };
+    public static String[] block_hash2 = new String[10];
 
     public static void main(String args[]) {
-//        write();
+        for (int i = 0; i < 11; i++) {
+            blockchain = new ArrayList<Block>();
+            write();
+            for (int j = 0; j < 10; j++) {
+                block_hash2[j] = blockchain.get(block_number[j] - 1).hash;
+            }
+            audit();
+        }
 
-        String json = Read_file();
-        json_analysis(json);
-
+//        String json = Read_file();
+//        for(int i=0;i<11;i++)
+//            json_analysis(json);
     }
 
     public static void write() {
         List<String> list = new ArrayList<>();
         Merkle_tree mk = new Merkle_tree(10);
+        long a = System.nanoTime();
         Run_AddBlock_Test(mk, list);
-        for (int i = 0; i < 128; i++) {
-            String blockchainJson = new Gson().toJson(blockchain.get(i));
-            write_file(blockchainJson, (i + 1) + "");
+        long b = System.nanoTime();
+//        System.out.println("build:" + (double) (b - a) / 1000000);
+
+//        for (int i = 0; i < 128; i++) {
+//            String blockchainJson = new Gson().toJson(blockchain.get(i));
+//            write_file(blockchainJson, (i + 1) + "");
+//        }
+//        String blockchainJson = new Gson().toJson(blockchain);
+//        write_file(blockchainJson);
+    }
+
+    public static void audit() {
+        long a = System.nanoTime();
+        int index = 0;
+        for (int i = 0; i < 1; i++) {
+            index = block_number[i] - 1;
+            String hash = blockchain.get(index).hash;
+            Merkle_tree mk = new Merkle_tree(10);
+            ArrayList<String> list = (ArrayList<String>) blockchain.get(index).tx;
+            mk.create(list);
+            mk.Verify(random[i] + "");
+            for (int j = index; j < blockchain.size(); j++) {
+                String previous_hash = blockchain.get(j).previousHash;
+                String root = blockchain.get(j).merkle_root;
+                String ts = blockchain.get(j).timeStamp + "";
+                String sha = sha256(ts + previous_hash + root);
+                hash = blockchain.get(j).hash;
+
+//                System.out.println(sha.equals(hash));
+            }
         }
-        String blockchainJson = new Gson().toJson(blockchain);
-        write_file(blockchainJson);
+        long b = System.nanoTime();
+        System.out.println((double) (b - a) / 1000000);
+
     }
 
     public static void json_analysis(String json) {
@@ -81,7 +118,7 @@ public class JavaTest {
                     String ts = jsonArray.get(j).getAsJsonObject().get("timeStamp").getAsString();
                     String sha = sha256(ts + previous_hash + root);
                     hash = jsonArray.get(j).getAsJsonObject().get("hash").getAsString();
-                    System.out.println(sha.equals(hash));
+//                    System.out.println(sha.equals(hash));
                 }
             }
 
