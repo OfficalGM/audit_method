@@ -9,7 +9,7 @@ public class JavaTest2 {
 
     public static void main(String args[]) {
 
-        for (int j = 0; j < 11; j++) {
+        for (int j = 0; j < 6; j++) {
             long a = System.nanoTime();
             AH ah = new AH();
             for (int i = 0; i < (1 << 17); i++) {

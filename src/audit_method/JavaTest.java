@@ -38,10 +38,10 @@ public class JavaTest {
         for (int i = 0; i < 11; i++) {
             blockchain = new ArrayList<Block>();
             write();
-            for (int j = 0; j < 10; j++) {
-                block_hash2[j] = blockchain.get(block_number[j] - 1).hash;
-            }
-            audit();
+//            for (int j = 0; j < 10; j++) {
+//                block_hash2[j] = blockchain.get(block_number[j] - 1).hash;
+//            }
+//            audit();
         }
 
 //        String json = Read_file();
@@ -51,12 +51,12 @@ public class JavaTest {
 
     public static void write() {
         List<String> list = new ArrayList<>();
-        Merkle_tree mk = new Merkle_tree(10);
+        Merkle_tree mk = new Merkle_tree(11);
         long a = System.nanoTime();
         Run_AddBlock_Test(mk, list);
         long b = System.nanoTime();
 //        System.out.println("build:" + (double) (b - a) / 1000000);
-
+        System.out.println((double) (b - a) / 1000000);
 //        for (int i = 0; i < 128; i++) {
 //            String blockchainJson = new Gson().toJson(blockchain.get(i));
 //            write_file(blockchainJson, (i + 1) + "");
@@ -68,10 +68,10 @@ public class JavaTest {
     public static void audit() {
         long a = System.nanoTime();
         int index = 0;
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 10; i++) {
             index = block_number[i] - 1;
             String hash = blockchain.get(index).hash;
-            Merkle_tree mk = new Merkle_tree(10);
+            Merkle_tree mk = new Merkle_tree(11);
             ArrayList<String> list = (ArrayList<String>) blockchain.get(index).tx;
             mk.create(list);
             mk.Verify(random[i] + "");
@@ -82,7 +82,7 @@ public class JavaTest {
                 String sha = sha256(ts + previous_hash + root);
                 hash = blockchain.get(j).hash;
 
-//                System.out.println(sha.equals(hash));
+                sha.equals(hash);
             }
         }
         long b = System.nanoTime();
@@ -130,8 +130,8 @@ public class JavaTest {
     public static void Run_AddBlock_Test(Merkle_tree mk, List list) {
         int number = 17;
         int k = 0;
-        for (int i = 1; i <= (1 << number) / 1024; i++) {
-            for (int j = k; j < (1024 * i); j++) {
+        for (int i = 1; i <= (1 << number) / 2048; i++) {
+            for (int j = k; j < (2048 * i); j++) {
 //                list.add(j + "");
                 list.add(sha256(j + ""));
             }
@@ -143,7 +143,7 @@ public class JavaTest {
             }
             mk.clear();
             list = new ArrayList<>();
-            k = 1024 * i;
+            k = 2048 * i;
 
         }
     }
