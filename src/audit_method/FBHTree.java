@@ -6,7 +6,7 @@ public class FBHTree {
 
     private int height;
     public Node[] nodes;
-    private int leaf_height;
+    public int leaf_height;
 
     public FBHTree(int treeHeight) {
         if (treeHeight < 0) {
@@ -33,21 +33,22 @@ public class FBHTree {
 
     public void put(String path, String file) {
         int index = calcLeafIndex(path);
-        BigInteger f = HashUtil.sha256_BigInteger(file);
-        BigInteger p = HashUtil.sha256_BigInteger(path);
+        String f = HashUtil.sha256(file);
+        String p = HashUtil.sha256(path);
         nodes[index].hashmap.put(p, f);
         multiply(index);
         update_node(index);
     }
 
     private void multiply(int index) {
-        BigInteger hash = BigInteger.ONE;
+        String hash = null;
         for (Object i : nodes[index].hashmap.keySet()) {
-            BigInteger key = (BigInteger) i;
-            BigInteger value = (BigInteger) nodes[index].hashmap.get(i);
-            BigInteger sha = HashUtil.sha256_BigInteger(key + "" + value + "");
-            hash = hash.multiply(sha);
+            String key = i.toString();
+            String value = nodes[index].hashmap.get(i).toString();
+            String sha = HashUtil.sha256(key + "" + value + "");
+            hash += sha;
         }
+
         nodes[index].hash = HashUtil.sha256(hash + "");
     }
 
@@ -68,16 +69,17 @@ public class FBHTree {
     public boolean audit(String path) {
         Boolean flag = false;
         int index = calcLeafIndex(path);
-        BigInteger hash = BigInteger.ONE;
+        String hash = null;
         for (Object i : nodes[index].hashmap.keySet()) {
-            BigInteger key = (BigInteger) i;
-            BigInteger value = (BigInteger) nodes[index].hashmap.get(i);
-            BigInteger sha = HashUtil.sha256_BigInteger(key + "" + value + "");
-            hash = hash.multiply(sha);
+            String key = i.toString();
+            String value = nodes[index].hashmap.get(i).toString();
+            String sha = HashUtil.sha256(key + "" + value + "");
+            hash += sha;
         }
         flag = nodes[index].hash.equals(HashUtil.sha256(hash + ""));
-        if(flag)
+        if (flag) {
             return audit_internal_node(index);
+        }
         return flag;
     }
 
@@ -105,16 +107,16 @@ public class FBHTree {
 
     public void remove(String path) {
         int index = calcLeafIndex(path);
-        BigInteger p = HashUtil.sha256_BigInteger(path);
-        BigInteger hash = BigInteger.ONE;
+        String p = HashUtil.sha256(path);
+        String hash = null;
         nodes[index].hashmap.remove(p);
-
         for (Object i : nodes[index].hashmap.keySet()) {
-            BigInteger key = (BigInteger) i;
-            BigInteger value = (BigInteger) nodes[index].hashmap.get(i);
-            BigInteger sha = HashUtil.sha256_BigInteger(key + "" + value + "");
-            hash = hash.multiply(sha);
+            String key = i.toString();
+            String value = nodes[index].hashmap.get(i).toString();
+            String sha = HashUtil.sha256(key + "" + value + "");
+            hash += sha;
         }
+
         nodes[index].hash = HashUtil.sha256(hash + "");
         update_node(index);
     }

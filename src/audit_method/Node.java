@@ -1,6 +1,5 @@
 package audit_method;
 
-import java.math.BigInteger;
 import java.util.HashMap;
 
 public class Node {
@@ -9,7 +8,7 @@ public class Node {
     public String hash="";
     public Node left;
     public Node right;
-    public HashMap<BigInteger, BigInteger> hashmap;
+    public HashMap<String, String> hashmap;
 
     public Node(int id, Node left, Node right) {
         this.id = id;
